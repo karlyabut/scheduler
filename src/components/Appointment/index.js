@@ -7,7 +7,7 @@ import Empty from "components/Appointment/Empty";
 export default function Appointment(props) {
 
   const appointment = props.interview ? 
-  <Show student={props.student} interviewer={"dsa"} /> : 
+  <Show student={props.interview.student} interviewer={props.interview.interviewer.name}/> :
   <Empty />;
   return (  
     <Fragment>
