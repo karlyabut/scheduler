@@ -6,7 +6,6 @@ export function useVisualMode(initial) {
   function transition(mode, replace = false) {
     if (!replace) {
       setHistory(prev => [...prev, mode]);
-      debugger
     } else {
       setHistory(prev => [...prev.slice(0, prev.length - 1), mode]);
     }

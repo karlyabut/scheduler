@@ -63,7 +63,8 @@ export default function Application(props) {
       }))
     });
   }, [])
-
+  //RESET DB
+  // axios.get("/api/debug/reset")
   function bookInterview(id, interview) {
     console.log(id, interview);
     const appointment = {
@@ -74,6 +75,12 @@ export default function Application(props) {
       ...state.appointments,
       [id]: appointment
     };
+    axios.put(`/api/appointments/${id}`, {
+      interview
+    })
+    .then(response => {
+      console.log(response);
+    })
     setState({ ...state, appointments});
   }
 
