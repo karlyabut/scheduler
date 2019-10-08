@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import "components/Appointment/style.scss";
 import Header from "components/Appointment/Header";
 import Show from "components/Appointment/Show";
@@ -6,6 +6,7 @@ import Empty from "components/Appointment/Empty";
 import Form from "components/Appointment/Form";
 import Status from "components/Appointment/Status";
 import Confirm from "components/Appointment/Confirm";
+import Error from "components/Appointment/Error";
 import { useVisualMode } from "hooks/useVisualMode";
 
 
@@ -18,16 +19,20 @@ export default function Appointment(props) {
   const DELETING = "DELETING";
   const CONFIRM = "CONFIRM";
 
+  //ERRORS
+  const ERROR_SAVE = "ERROR_SAVE";
+  const ERROR_DELETE = "ERROR_DELETE";
+
   const {mode, transition, back } = useVisualMode( 
     props.interview ? SHOW : EMPTY
   );
 
   function edit() {
-    transition(EDIT);  console.log("?????",props.interview.interviewer.id)
+    transition(EDIT);
   }
 
   function save(name, interviewer) {
-    transition(SAVING);
+    transition(SAVING, true);
     const interview = {
       student: name,
       interviewer
@@ -35,8 +40,10 @@ export default function Appointment(props) {
     props.bookInterview(props.id, interview)
     .then(() => {
       transition(SHOW);
-    });
-    console.log("?", props.id, interview);
+    }).catch(error => {
+      transition(ERROR_SAVE, true);
+    })
+    // console.log("?", props.id, interview);
   }
 
   function deleteInterview() {
@@ -44,11 +51,23 @@ export default function Appointment(props) {
   }
 
   function confirmDelete() {
-    transition(DELETING)
+    transition(DELETING, true);
     props.deleteInterview(props.id).then(() => {
       transition(EMPTY);
+    }).catch(error => {
+      transition(ERROR_DELETE, true);
     })
   }
+
+  // useEffect(() => {
+  //   if(props.interview && mode === EMPTY) {
+  //     transition(SHOW);
+  //   }
+  //   if(props.interview === null && mode === SHOW) {
+  //     transition(Empty)
+  //   }
+  // }, [props.interview, mode, transition])
+
   return (  
     <Fragment>
       <Header time={props.time}/>
@@ -86,6 +105,8 @@ export default function Appointment(props) {
         onCancel={back}
         />
       }
+      {mode === ERROR_SAVE && <Error message={"Could not save appointment"} onClose={back}/>}
+      {mode === ERROR_DELETE && <Error message={"Could not delete appointment"} onClose={back}/>}
     </Fragment>
     )
 }
