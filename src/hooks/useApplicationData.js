@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from 'react';
-import axios from 'axios';
+import Axios from 'axios';
 
 export function useApplicationData() {
   const SET_DAY = "SET_DAY";
@@ -40,13 +40,13 @@ export function useApplicationData() {
     }
   }
 
-
   const [state, dispatch] = useReducer(reducer, {
     day: "Monday",
     days: [],
     appointments: {},
     interviewers: {}
   })
+
   const setDay = day => dispatch({
     type: SET_DAY,
     value: day
@@ -56,59 +56,61 @@ export function useApplicationData() {
   useEffect(() => {
     Promise.all([
       Promise.resolve(
-        axios.get("/api/days")
+        Axios.get("/api/days")
       ),
       Promise.resolve(
-        axios.get("/api/appointments")
+        Axios.get("/api/appointments")
       ),
       Promise.resolve(
-        axios.get("/api/interviewers")
+        Axios.get("/api/interviewers")
       )
     ]).then((all) => {
       dispatch({
         type: SET_APPLICATION_DATA,
         value: all
       });
+    })
+    .catch(err => {
+      console.error(err);
     });
   }, [])
-  //RESET DB
-  // axios.get("/api/debug/reset")
+
   const getDayIndex = date => {
     const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     return weekDays.indexOf(date);
   }
   
+  //Adding appointment
   function bookInterview(id, interview) {
-    // console.log(id, interview);
+
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview }
     };
+
     const appointments = {
       ...state.appointments,
       [id]: appointment
     };
-    // setState({ ...state, appointments});
-    return axios.put(`/api/appointments/${id}`, appointment)
+
+    return Axios.put(`/api/appointments/${id}`, appointment)
     .then(response => {
       if(!state.appointments[id].interview) {
         let tempD = {...state};
-        console.log(state.appointments[id].interview);
         tempD.days[getDayIndex(tempD.day)].spots -= 1
-        console.log(tempD)
         dispatch({
           type: SET_SPOT,
           value: tempD.days
         })
       }
-      // spots: state.days[getDayIndex(state.day)].spots - 1;
-      // console.log("-->", state.appointments[0].interview)
       dispatch({
         type: SET_INTERVIEW,
         value: appointments
       })
-      // console.log(response);
     })
+    .catch(err => {
+      console.error(err);
+    });
   }
   
   function deleteInterview(id) {
@@ -121,7 +123,7 @@ export function useApplicationData() {
       [id]: appointment
     };
     // setState({ ...state, appointments});
-    return axios.delete(`/api/appointments/${id}`)
+    return Axios.delete(`/api/appointments/${id}`)
     .then(response => {
       dispatch({
         type: SET_INTERVIEW,
@@ -134,7 +136,10 @@ export function useApplicationData() {
         type: SET_SPOT,
         value: tempD.days
       })
-    });
+    })
+    .catch(err => {
+      console.error(err);
+    });;
   }
 
   return {state, setDay, bookInterview, deleteInterview}

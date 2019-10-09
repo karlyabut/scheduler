@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 import "components/Appointment/style.scss";
 import Header from "components/Appointment/Header";
 import Show from "components/Appointment/Show";
@@ -26,11 +26,12 @@ export default function Appointment(props) {
   const {mode, transition, back } = useVisualMode( 
     props.interview ? SHOW : EMPTY
   );
-
+  
+  //RENDER edit view IF clicked on edit button...
   function edit() {
     transition(EDIT);
   }
-
+  //THEN apply save functionality
   function save(name, interviewer) {
     transition(SAVING, true);
     const interview = {
@@ -43,13 +44,13 @@ export default function Appointment(props) {
     }).catch(error => {
       transition(ERROR_SAVE, true);
     })
-    // console.log("?", props.id, interview);
   }
 
+  //RENDER confirm view first..
   function deleteInterview() {
     transition(CONFIRM);
   }
-
+  //THEN apply delete functionality
   function confirmDelete() {
     transition(DELETING, true);
     props.deleteInterview(props.id).then(() => {
@@ -58,15 +59,6 @@ export default function Appointment(props) {
       transition(ERROR_DELETE, true);
     })
   }
-
-  // useEffect(() => {
-  //   if(props.interview && mode === EMPTY) {
-  //     transition(SHOW);
-  //   }
-  //   if(props.interview === null && mode === SHOW) {
-  //     transition(Empty)
-  //   }
-  // }, [props.interview, mode, transition])
 
   return (  
     <Fragment>
