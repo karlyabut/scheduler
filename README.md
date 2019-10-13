@@ -21,3 +21,8 @@ npm test
 ```sh
 npm run storybook
 ```
+
+# Screenshots
+!["Appointments view"](https://github.com/karlyabut/scheduler/blob/master/docs/appointments.png)
+!["Adding appointment"](https://github.com/karlyabut/scheduler/blob/master/docs/add-appointment.png)
+!["Added appoint ment"](https://github.com/karlyabut/scheduler/blob/master/docs/appointment-added.png)
