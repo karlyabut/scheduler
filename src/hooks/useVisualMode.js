@@ -5,8 +5,10 @@ export default function useVisualMode(initial) {
   const mode = history[history.length - 1];
   function transition(mode, replace = false) {
     if (!replace) {
+      //Make a copy and add mode
       setHistory(prev => [...prev, mode]);
     } else {
+      //replace the last element with new mode
       setHistory(prev => [...prev.slice(0, prev.length - 1), mode]);
     }
   }

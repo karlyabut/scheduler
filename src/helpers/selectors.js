@@ -24,13 +24,10 @@ export function getInterview(state, interview) {
 export function getInterviewersByDay(state, day) {
   let interviewersOnDay = [];
   const appointmentDay = state.days.filter(forDay => forDay.name === day);
-  // console.log("??", appointmentDay);
   for(let appointment of appointmentDay) {
-    // console.log(appointment.interviewers);
     appointment.interviewers.forEach(element => {
       interviewersOnDay.push(element)
     })
   }
-  // console.log(interviewersOnDay);
   return interviewersOnDay;
 }

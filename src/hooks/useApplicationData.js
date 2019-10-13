@@ -82,7 +82,6 @@ export function useApplicationData() {
       ...state.appointments,
       [id]: appointment
     };
-    // setState({ ...state, appointments});
     return Axios.delete(`/api/appointments/${id}`)
     .then(response => {
       dispatch({
