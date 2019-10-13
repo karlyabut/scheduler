@@ -1,45 +1,8 @@
 import { useEffect, useReducer } from 'react';
 import Axios from 'axios';
+import { reducer, SET_DAY, SET_APPLICATION_DATA, SET_INTERVIEW, SET_SPOT } from "reducers/application"
 
 export function useApplicationData() {
-  const SET_DAY = "SET_DAY";
-  const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
-  const SET_INTERVIEW = "SET_INTERVIEW";
-  const SET_SPOT = "SET_SPOT";
-
-  function reducer(state, action) {
-    switch (action.type) {
-      case SET_DAY:
-        return {
-          ...state,
-          day: action.value
-        }
-      case SET_APPLICATION_DATA:
-        return {
-          ...state,
-          days: action.value[0].data,
-          appointments: action.value[1].data,
-          interviewers: action.value[2].data
-        }
-      case SET_INTERVIEW: {
-        return {
-          ...state,
-          appointments: action.value
-        }
-      }
-      case SET_SPOT: {
-        return {
-          ...state,
-          days: action.value
-        }
-      }
-      default:
-        throw new Error(
-          `Tried to reduce with unsupported action type: ${action.type}`
-        );
-    }
-  }
-
   const [state, dispatch] = useReducer(reducer, {
     day: "Monday",
     days: [],
@@ -94,7 +57,7 @@ export function useApplicationData() {
     };
 
     return Axios.put(`/api/appointments/${id}`, appointment)
-    .then(response => {
+    .then((response) => {
       if(!state.appointments[id].interview) {
         let tempD = {...state};
         tempD.days[getDayIndex(tempD.day)].spots -= 1
@@ -108,9 +71,6 @@ export function useApplicationData() {
         value: appointments
       })
     })
-    .catch(err => {
-      console.error(err);
-    });
   }
   
   function deleteInterview(id) {
@@ -130,16 +90,12 @@ export function useApplicationData() {
         value: appointments
       })
       let tempD = {...state};
-      console.log(state.appointments[id].interview)
       tempD.days[getDayIndex(tempD.day)].spots += 1
       dispatch({
         type: SET_SPOT,
         value: tempD.days
       })
     })
-    .catch(err => {
-      console.error(err);
-    });;
   }
 
   return {state, setDay, bookInterview, deleteInterview}
